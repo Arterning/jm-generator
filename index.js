@@ -26,7 +26,7 @@ program
         type: 'input',
         name: 'artifactId',
         message: 'Enter the Artifact ID:',
-        default: 'my-app',
+        default: projectName,
       },
       {
         type: 'input',
