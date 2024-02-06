@@ -11,7 +11,10 @@ const { generatePomXml,
         generateTestJava,
         generateSpringbootPomXml,
         generateSpringbootAppJava,
-        generateSpringbootTestJava
+        generateSpringbootController,
+        generateSpringbootTestJava,
+        generateSqliteTest,
+        generateApplicationProperties
    } = require('./utils');
 
 
@@ -96,12 +99,16 @@ function createSpringbootProject(projectName, answers) {
   const appJavaContent = generateSpringbootAppJava(answers.groupId);
   fs.writeFileSync(path.join(javaPackagePath, 'App.java'), appJavaContent);
 
+  // Write Controller.java file
+  const controllerJavaContent = generateSpringbootController(answers.groupId);
+  fs.writeFileSync(path.join(javaPackagePath, 'UserController.java'), controllerJavaContent);
+
 
   // Create src/main/resources directory
   fs.mkdirSync(path.join(projectPath, 'src', 'main', 'resources'), { recursive: true });
 
   // Write application.properties file
-  const applicationPropertiesContent = `server.port=8080`;
+  const applicationPropertiesContent = generateApplicationProperties(answers.groupId);
   fs.writeFileSync(path.join(projectPath, 'src', 'main', 'resources', 'application.properties'), applicationPropertiesContent);
 
   // Create src/test/java directory
@@ -112,6 +119,9 @@ function createSpringbootProject(projectName, answers) {
   const testJavaContent = generateSpringbootTestJava(answers.groupId);
   fs.writeFileSync(path.join(testJavaPackagePath, 'ContextTest.java'), testJavaContent);
 
+  // Write SQLiteTest.java file
+  const sqliteTestJavaContent = generateSqliteTest(answers.groupId);
+  fs.writeFileSync(path.join(testJavaPackagePath, 'SQLiteTest.java'), sqliteTestJavaContent);
   createProjectConfigFile(projectPath);
 }
 
@@ -140,6 +150,9 @@ end_of_line = lf
     `;
   fs.writeFileSync(path.join(projectPath, '.editorconfig'), editorconfigContent);
 
+  // Run git init
+  execSync('git init', { cwd: projectPath });
+  
   console.log('Java Maven project created successfully.');
 }
 
