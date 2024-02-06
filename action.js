@@ -17,6 +17,7 @@ const { generatePomXml,
         generateApplicationProperties
    } = require('./utils');
 
+const execSync = require('child_process').execSync;
 
 const createProject = async (projectName, options) => {
     await loadInquirer();
@@ -137,6 +138,7 @@ function createProjectConfigFile(projectPath) {
 .mvn/
 target/
 .mvn/wrapper/
+*.db
     `;
   fs.writeFileSync(path.join(projectPath, '.gitignore'), gitignoreContent);
 
@@ -150,8 +152,10 @@ end_of_line = lf
     `;
   fs.writeFileSync(path.join(projectPath, '.editorconfig'), editorconfigContent);
 
-  // Run git init
+  // Run git init and commit changes
   execSync('git init', { cwd: projectPath });
+  execSync('git add .', { cwd: projectPath });
+  execSync('git commit -m "Initial commit"', { cwd: projectPath });
   
   console.log('Java Maven project created successfully.');
 }
